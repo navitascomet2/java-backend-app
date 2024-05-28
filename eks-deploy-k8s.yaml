@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: back-end-mock-1
+  name: back-end-mock-1
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: back-end-mock-1
+  template:
+    metadata:
+      labels:
+        app: back-end-mock-1
+    spec:
+      containers:
+        - name: my-back-end-mock-1
+          image: 891377337960.dkr.ecr.us-east-1.amazonaws.com/back-end-mock-1:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8086
+              name: http
+              protocol: TCP
+
+---
+# service type loadbalancer
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: back-end-mock-1
+    k8s-app: back-end-mock-1
+  name: back-end-mock-1
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8086
+  type: LoadBalancer
+  selector:
+    app: back-end-mock-1
